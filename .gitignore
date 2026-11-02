@@ -1,0 +1,20 @@
+# Operating-system and editor files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Android and packaged application artifacts are outside this repository's scope
+*.apk
+*.aab
+*.dex
+*.smali
+AndroidManifest.xml
+res/
+smali/
+smali_classes*/
+
+# Local archives and temporary files
+*.tar
+*.zip
+*.tmp

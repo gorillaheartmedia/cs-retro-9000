@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#101116">
+  <title>CS Retro 9000</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand"><span class="logo">CS</span><div><h1>Retro 9000</h1><p>five-track retro music workstation</p></div></div>
+    <div class="transport">
+      <button id="rewind" class="icon" aria-label="Return to start">↤</button>
+      <button id="undo" class="icon" aria-label="Undo" title="Undo (Ctrl/Cmd+Z)" disabled>↶</button>
+      <button id="redo" class="icon" aria-label="Redo" title="Redo (Ctrl/Cmd+Shift+Z)" disabled>↷</button>
+      <button id="play" class="primary">▶ Play</button>
+      <button id="record" class="record" title="Record (F9)">● Record</button>
+      <label class="tempo">BPM <input id="bpm" type="number" min="50" max="200" value="110"></label>
+      <details class="click-settings"><summary id="metronomeToggle" title="Metronome settings">Click: Off</summary><div class="click-popover"><label>Mode <select id="clickMode"><option value="off">Off</option><option value="play">Playback</option><option value="record">Recording</option><option value="always">Always</option></select></label><label>Count-in <select id="countInBars"><option value="0">Off</option><option value="1">1 bar</option><option value="2" selected>2 bars</option><option value="4">4 bars</option></select></label><label>Volume <input id="clickVolume" type="range" min="0" max="1" step="0.05" value="0.45"></label><small>First beat is accented</small></div></details>
+      <button id="save" class="icon wide">Save</button>
+      <button id="exportProject" class="icon wide" title="Download a portable CS Retro 9000 project">Export Project</button>
+      <button id="importProject" class="icon wide" title="Open a portable CS Retro 9000 project">Import Project</button>
+      <button id="exportWav" class="icon wide" title="Download the selected loop section as audio">Export WAV</button>
+      <button id="exportSong" class="icon wide" title="Render the complete song arrangement as audio">Export Song</button>
+      <button id="importMidi" class="icon wide" title="Import a standard MIDI file into the current pattern">Import MIDI</button>
+      <button id="exportPatternMidi" class="icon wide" title="Export the current pattern as MIDI">MIDI Pattern</button>
+      <button id="exportSongMidi" class="icon wide" title="Export the complete arrangement as MIDI">MIDI Song</button>
+      <button id="clear" class="icon wide">Clear</button>
+    </div>
+  </header>
+
+  <main>
+    <section class="statusbar">
+      <span id="status">Ready — choose a track and play</span>
+      <div class="timeline-tools"><span id="selectionInfo">No notes selected</span><label class="velocity-tool">Velocity <input id="noteVelocity" type="range" min="1" max="127" value="100" disabled><output id="velocityValue">100</output></label><button id="cutNotes" class="tool-button" title="Cut (Ctrl/Cmd+X)" disabled>Cut</button><button id="copyNotes" class="tool-button" disabled>Copy</button><button id="pasteNotes" class="tool-button" disabled>Paste</button><label>Automation <select id="automationTarget"><optgroup label="Mixer"><option value="volume">Volume</option><option value="pan">Pan</option></optgroup><optgroup label="Tone"><option value="brightness">Brightness</option><option value="resonance">Resonance</option><option value="fm">FM Amount</option><option value="detune">Detune</option><option value="attack">Attack</option><option value="release">Release</option><option value="glide">Glide</option></optgroup><optgroup label="Effects"><option value="reverb">Reverb</option><option value="distortion">Distortion</option><option value="bassBoost">Bass Boost</option><option value="phaser">Phaser</option><option value="delay">Delay</option><option value="chorus">Chorus</option><option value="crusher">Bit Crusher</option></optgroup></select></label><button id="automationMode" class="tool-button">Automation: Off</button><label>Snap <select id="snap"><option value="0.25">1/16</option><option value="0.5">1/8</option><option value="1">1/4</option><option value="0">Off</option></select></label><span id="position">1.1.1</span><span id="loopInfo" class="loop-pill">↻ 1.1 → 9.1</span></div>
+    </section>
+    <nav class="panel-switcher" aria-label="Workspace panels"><strong>WORKSPACE</strong><button data-panel="patternPanel">Patterns</button><button data-panel="drumPanel">Drums</button><button data-panel="groovePanel">Groove</button><button data-panel="timelinePanel">Timeline</button><button data-panel="pianoPanel">Piano Roll</button><button data-panel="mixerPanel">Mixer</button><button data-panel="instrumentPanel">Instrument</button><button id="showAllPanels" class="tool-button">Show All</button></nav>
+    <section id="patternPanel" class="pattern-panel">
+      <div class="pattern-tools"><strong>PATTERNS</strong><select id="patternSelect" aria-label="Current pattern"></select><button id="newPattern">New</button><button id="duplicatePattern">Duplicate</button><button id="renamePattern">Rename</button><button id="deletePattern" class="danger">Delete</button><button id="addToSong" class="primary">Add to Song</button><button id="songMode">Mode: Pattern Loop</button></div>
+<div class="arrangement-head"><span>SONG ARRANGEMENT</span><small>Click a block to select · drag to reorder</small><label class="section-tempo">Section BPM <input id="sectionTempo" type="number" min="50" max="200" value="110"><button id="sectionTempoGlobal" class="tool-button">Use Global</button></label><button id="renameSection" class="tool-button">Label</button><input id="sectionColor" type="color" value="#d4f85c" title="Selected section color" aria-label="Selected section color"><button id="duplicateSection" class="tool-button">Duplicate</button><button id="deleteSection" class="tool-button danger">Delete</button><button id="songLoopStart" class="tool-button">Loop Start</button><button id="songLoopEnd" class="tool-button">Loop End</button><button id="songLoopToggle" class="tool-button">Song Loop: Off</button><button id="clearSong" class="tool-button">Clear</button></div>
+      <div class="tempo-map-head"><strong>TEMPO MAP</strong><small>Double-click a marker to edit · drag it to another section · right-click for step/ramp</small></div>
+      <div id="tempoMap" class="tempo-map" aria-label="Song tempo map"></div>
+      <div id="arrangement" class="arrangement"></div>
+    </section>
+    <section id="drumPanel" class="drum-panel" aria-label="Drum step sequencer">
+      <div class="drum-head"><div><strong>DRUM SEQUENCER</strong><small>16 steps · edits the selected track and current pattern</small></div><label>Bar <select id="drumBar" aria-label="Drum sequencer bar"></select></label><button id="useDrumKit" class="primary">Use 16-Bit Kit</button><button id="drumRandom">Randomize</button><button id="drumClear" class="danger">Clear Bar</button></div>
+      <div id="drumGrid" class="drum-grid"></div>
+    </section>
+    <section id="groovePanel" class="groove-panel" aria-label="Swing and groove">
+      <div class="groove-head"><div><strong>SWING &amp; GROOVE</strong><small>Non-destructive playback timing and velocity feel</small></div><label>Preset <select id="groovePreset"><option value="custom">Custom</option><option value="straight">Straight</option><option value="shuffle">Shuffle</option><option value="funk">Loose Funk</option><option value="hiphop">Hip-Hop</option><option value="triplet">Triplet</option></select></label></div>
+      <div class="groove-global"><label>Swing <input id="globalSwing" type="range" min="0" max="75" step="1"><output></output></label><label>Timing Humanize <input id="humanTiming" type="range" min="0" max="30" step="1"><output></output></label><label>Velocity Humanize <input id="humanVelocity" type="range" min="0" max="25" step="1"><output></output></label></div>
+      <div id="grooveTracks" class="groove-tracks"></div>
+    </section>
+    <section id="timelinePanel" class="sequencer">
+      <div class="ruler-label">TRACKS</div><div id="ruler" class="ruler"></div>
+      <div id="trackControls" class="track-controls"></div>
+      <div id="lanes" class="lanes"></div>
+    </section>
+
+    <section id="pianoPanel" class="piano-roll-panel">
+      <div class="piano-roll-head"><div><span class="eyebrow">PIANO ROLL</span><h2 id="pianoRollName">Track 1</h2></div><p>Double-click to draw · drag to move pitch/time · drag right edge to resize</p><label>Zoom <select id="pianoZoom"><option value="32">Compact</option><option value="48" selected>Normal</option><option value="72">Wide</option></select></label><button id="centerPianoRoll" class="tool-button">Center Notes</button></div>
+      <div class="mirror-tools"><strong>BAR MIRROR</strong><label>Mode <select id="mirrorMode"><option value="off">Off</option><option value="all">All 8 Bars</option><option value="custom">Selected Bars</option></select></label><button id="mirrorBars" class="tool-button">Bars 1–8</button><label><input id="mirrorRecord" type="checkbox"> Mirror recording</label><button id="unlinkMirrors" class="tool-button">Unlink Selected</button><small id="mirrorStatus">New notes are independent</small></div>
+      <div id="pianoScroll" class="piano-scroll"><div id="pianoKeys" class="piano-keys"></div><div id="pianoGrid" class="piano-grid"><div id="pianoPlayhead" class="piano-playhead"></div></div></div>
+    </section>
+
+    <section id="mixerPanel" class="mixer-panel">
+      <div class="mixer-head"><div><span class="eyebrow">MIXER</span><h2>Channel Balance</h2></div><p>Volume, stereo position, reverb send, mute and solo</p></div>
+      <div id="mixerStrips" class="mixer-strips"></div>
+    </section>
+
+    <section id="instrumentPanel" class="instrument">
+      <div class="instrument-head">
+        <div><span class="eyebrow">ACTIVE INSTRUMENT</span><h2 id="activeName">1 · Neon Keys</h2><div class="track-identity"><input id="trackName" maxlength="24" aria-label="Track name" title="Track name"><input id="trackColor" type="color" aria-label="Track color" title="Track color"></div></div>
+        <label class="sound-picker">Sound <select id="bank" aria-label="Instrument class"><option>Universal</option><option>Chiptune</option><option>16-Bit</option><option>Keys</option><option>Bells</option><option>Basses</option><option>Pads</option><option>Leads</option><option>Plucks</option><option>Organs</option><option>Brass</option><option>Strings</option><option>Mallets</option><option>Drums</option><option>Effects</option></select><input id="presetSearch" type="search" placeholder="Search sounds"><select id="preset"></select><small id="libraryCount">Universal instruments</small></label>
+        <label>Octave <span class="stepper"><button id="octDown">−</button><b id="octave">4</b><button id="octUp">+</button></span></label>
+        <label>Volume <input id="volume" type="range" min="0" max="1" step="0.01" value="0.7"></label>
+        <div class="performance-controls"><button id="latch" title="Toggle notes on/off to build chords">Latch: Off</button><button id="midi" title="Connect a MIDI keyboard">Connect MIDI</button><button id="freezeTrack" title="Render or unfreeze the selected track loop">Freeze Track</button><button id="bounceTrack" title="Download the selected track loop as WAV">Bounce WAV</button></div>
+        <button id="eraseTrack" class="danger">Erase track</button>
+      </div>
+      <div class="sound-editor" aria-label="Sound editor">
+        <div class="sound-editor-title"><span><b>Edit Sound</b><small>Track-specific controls</small></span><button id="resetSound" class="tool-button">Reset preset</button></div>
+        <label>Attack <input data-sound="attack" type="range" min="0.001" max="1.5" step="0.001"><output></output></label>
+        <label>Release <input data-sound="release" type="range" min="0.05" max="4" step="0.01"><output></output></label>
+        <label>Brightness <input data-sound="brightness" type="range" min="300" max="16000" step="50"><output></output></label>
+        <label>Resonance <input data-sound="resonance" type="range" min="0" max="18" step="0.1"><output></output></label>
+        <label>FM Amount <input data-sound="fm" type="range" min="0" max="2.5" step="0.01"><output></output></label>
+        <label>Detune <input data-sound="detune" type="range" min="0" max="40" step="0.5"><output></output></label>
+        <label>Reverb <input data-sound="reverb" type="range" min="0" max="1" step="0.01"><output></output></label>
+        <label>Distortion <input data-sound="distortion" type="range" min="0" max="1" step="0.01"><output></output></label>
+        <label>Bass Boost <input data-sound="bassBoost" type="range" min="0" max="18" step="0.5"><output></output></label>
+        <label>Phaser <input data-sound="phaser" type="range" min="0" max="1" step="0.01"><output></output></label>
+        <label>Delay <input data-sound="delay" type="range" min="0" max="1" step="0.01"><output></output></label>
+        <label>Chorus <input data-sound="chorus" type="range" min="0" max="1" step="0.01"><output></output></label>
+        <label>Bit Crusher <input data-sound="crusher" type="range" min="0" max="1" step="0.01"><output></output></label>
+        <label>Stereo Pan <input data-sound="pan" type="range" min="-1" max="1" step="0.01"><output></output></label>
+        <label>Glide <input data-sound="glide" type="range" min="0" max="0.5" step="0.005"><output></output></label>
+        <label>EQ Low <input data-sound="eqLow" type="range" min="-18" max="18" step="0.5"><output></output></label>
+        <label>EQ Mid <input data-sound="eqMid" type="range" min="-18" max="18" step="0.5"><output></output></label>
+        <label>EQ High <input data-sound="eqHigh" type="range" min="-18" max="18" step="0.5"><output></output></label>
+        <label>Comp Threshold <input data-sound="compThreshold" type="range" min="-60" max="0" step="1"><output></output></label>
+        <label>Comp Ratio <input data-sound="compRatio" type="range" min="1" max="20" step="0.5"><output></output></label>
+        <label>Comp Makeup <input data-sound="compMakeup" type="range" min="0" max="18" step="0.5"><output></output></label>
+      </div>
+      <div id="keyboard" class="keyboard" aria-label="Two octave musical keyboard"></div>
+      <p id="drumLegend" class="drum-legend" hidden>16-Bit Kit: C Kick · C♯ Rim · D Snare · E♭ Clap · E Closed Hat · F/G/A♭ Toms · G Cowbell · A Shaker · B♭ Crash · B Open Hat</p>
+      <p class="hint">Loop: drag the green ruler handles to set start/end · Latch builds chords one note at a time · MIDI supports full keyboard polyphony</p>
+    </section>
+  </main>
+  <input id="midiFile" type="file" accept=".mid,.midi,audio/midi,audio/x-midi" hidden>
+  <input id="projectFile" type="file" accept=".fmloop,application/json" hidden>
+  <dialog id="exportDialog" class="export-dialog"><form method="dialog"><div class="export-dialog-head"><div><span>EXPORT FILE</span><h2>Name and destination</h2></div><button id="exportCancelX" value="cancel" aria-label="Close">×</button></div><label>File name<input id="exportFileName" type="text" autocomplete="off" spellcheck="false"></label><label>Destination<div class="folder-field"><input id="exportFolder" type="text" value="Choose in the system Save As dialog" readonly><button id="exportBrowse" type="button">Save As…</button></div></label><p id="exportHelp">Save As lets you choose the filename and location together. Download uses your browser’s normal Downloads folder.</p><div class="export-actions"><button id="exportCancel" value="cancel">Cancel</button><button id="exportConfirm" type="button" class="primary">Download</button></div></form></dialog>
+  <div id="toast" class="toast"></div>
+  <script src="app.js"></script>
+</body>
+</html>
